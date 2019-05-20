@@ -42,7 +42,7 @@
     SearchFilter	"{{ ldap.search_filter }}"
 
     # Require Group Membership
-    {% if ldap.require_group %}
+{% if ldap.require_group %}
     RequireGroup	True
     # Add non-group members to a PF table (disabled)
     #PFTable	ips_vpn_users
@@ -53,6 +53,6 @@
         MemberAttribute	uniqueMember
         # Add group members to a PF table (disabled)
         #PFTable	ips_vpn_eng
-        </Group>
-    {%endif %}
+    </Group>
+{% endif %}
 </Authorization>

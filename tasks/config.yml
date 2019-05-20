@@ -7,6 +7,12 @@
   notify:
     - restart openvpn
 
+- name: Create auth directory
+  file:
+    path: "{{ openvpn_base_dir }}/auth"
+    state: directory
+  when: openvpn_use_ldap
+
 - name: Install LDAP config
   template:
     src: ldap.conf.j2
