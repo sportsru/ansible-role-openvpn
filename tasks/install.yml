@@ -1,6 +1,7 @@
+---
 - name: Install EPEL
   package:
-    name: epel-release
+    name: "{{ epel_package_name }}"
     state: present
   when: ansible_distribution == "CentOS" or ansible_distribution=="RedHat"
 
@@ -14,17 +15,26 @@
 
 - name: Install openvpn
   package:
-   name: "{{ item }}"
-   state: present
+    name: "{{ item }}"
+    state: present
   with_items:
-    - openvpn
-    - openssl
+    - "{{ openvpn_package_name }}"
+    - "{{ openssl_package_name }}"
 
 - name: Install LDAP plugin
+  become: true
   package:
-   name: openvpn-auth-ldap
-   state: present
-  when: openvpn_use_ldap
+    name: "{{ openvpn_ldap_plugin_package_name }}"
+    state: present
+  when:
+    - openvpn_use_ldap
+    - ansible_distribution == "CentOS" and ansible_distribution_major_version != "8"
+
+- name: Compile LDAP plugin
+  include_tasks: compile_ldap_plugin.yml
+  when:
+    - openvpn_use_ldap
+    - ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
 
 # RHEL has the group 'nobody', 'Debian/Ubuntu' have 'nogroup'
 # standardize on 'nogroup'
@@ -32,4 +42,4 @@
   group:
     name: nogroup
     state: present
-    system: yes
+    system: true
